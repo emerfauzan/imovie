@@ -1,12 +1,23 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:imovie/pages/detail.dart';
 
-class Home extends StatelessWidget {
+/*
+* Pada halaman home dibuat stateful untuk menyimpan film favorit
+* Untuk memfavoritkan film dilakukan dengan double tap
+* */
+class Home extends StatefulWidget {
   const Home({super.key});
 
   @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  final movies = List.generate(4, (i) => 'Film ${i + 1}'); // Data dummy film
+  final favorites = <int>{}; // Data film yang di favoritkan
+
+  @override
   Widget build(BuildContext context) {
-    final movies = List.generate(4, (i) => 'Film ${i + 1}');
 
     /*
     * Pada halaman home ini menggunakan Scaffold, dan isi body nya menggunakan GridView
@@ -30,6 +41,7 @@ class Home extends StatelessWidget {
         itemCount: movies.length, // jumlah item yang di tampilkan, berdasarkan data dummy yang digunakan
         itemBuilder: (context, index) {
           final title = movies[index]; // judul film untuk item ini
+          final isFavorite = favorites.contains(index); // cek apakah item ini favorit
 
           return Card( // Inisiasi Card
             clipBehavior: Clip.antiAlias, // Untuk mengatur wrap content nya
@@ -42,8 +54,14 @@ class Home extends StatelessWidget {
                   ),
                 );
               },
-              onDoubleTap: () { // callback saat di double tap
-
+              onDoubleTap: () { // tap dua kali: tambah/hapus dari favorit
+                setState(() { // setState = minta Flutter build() ulang
+                  if (isFavorite) {
+                    favorites.remove(index);
+                  } else {
+                    favorites.add(index);
+                  }
+                });
               },
               child: Column( // Inisiasi isi card menggunakan column
                 crossAxisAlignment: CrossAxisAlignment.stretch, // Agar isi content full lebar nya
@@ -54,12 +72,23 @@ class Home extends StatelessWidget {
                     child: const Icon(Icons.movie, size: 48), // Icon movie dengan size 48
                   )),
                   Padding(padding: const EdgeInsets.all(8),
-                    child: Text( // Inisiasi teks atau judul dengan isi teks dari data dummy
-                      movies[index],
-                      style: Theme.of(context).textTheme.titleMedium, // Ukuran teks
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis, // untuk handle jika teks terlalu panjang
-                    ),
+                    child: Row (
+                      children: [
+                        Expanded(
+                            child: Text( // Inisiasi teks atau judul dengan isi teks dari data dummy
+                              movies[index],
+                              style: Theme.of(context).textTheme.titleMedium, // Ukuran teks
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis, // untuk handle jika teks terlalu panjang
+                            ),
+                        ),
+                        Icon( // ikon favorit di ujung kanan
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorite ? Colors.red : null,
+                          size: 20,
+                        ),
+                      ],
+                    )
                   ),
                 ],
               ),
