@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:imovie/pages/detail.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -28,11 +29,18 @@ class Home extends StatelessWidget {
         ),
         itemCount: movies.length, // jumlah item yang di tampilkan, berdasarkan data dummy yang digunakan
         itemBuilder: (context, index) {
+          final title = movies[index]; // judul film untuk item ini
+
           return Card( // Inisiasi Card
             clipBehavior: Clip.antiAlias, // Untuk mengatur wrap content nya
             child: InkWell( // Membuat agar area card bisa di tap
               onTap: () { // callback saat di tap
-
+                Navigator.push( // pindah ke halaman baru (ditaruh di atas stack)
+                  context,
+                  MaterialPageRoute( // route dengan animasi transisi standar Material
+                    builder: (context) => Detail(title: title), // kirim judul ke Detail
+                  ),
+                );
               },
               onDoubleTap: () { // callback saat di double tap
 
